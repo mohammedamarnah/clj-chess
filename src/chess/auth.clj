@@ -1,4 +1,4 @@
-(ns chess.server.auth
+(ns chess.auth
   (:require [clojure.string :as str]
             [buddy.sign.jws :as jws]
             [cheshire.core :as json]))

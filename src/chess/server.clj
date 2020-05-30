@@ -1,9 +1,10 @@
-(ns chess.server.server
+(ns chess.server
   (:require
     [cheshire.core :as json]
     [clojure.tools.logging :as log]
+    [chess.controller :as ctl]
     [compojure.core :refer [GET defroutes]]
-    [chess.server.auth :refer [authorize parse-token]]
+    [chess.auth :refer [authorize parse-token]]
     [org.httpkit.server :refer [send! with-channel on-close on-receive]]))
 
 (defonce users-conns (atom {}))
@@ -29,16 +30,20 @@
 (defn ping [conn msg]
   (resp :status "pong" conn))
 
-(defn create-game-state [conn msg]
+(defn game-controller [conn msg]
   (let [uid (@conns conn)]
     (log/info (str "user creating a game: " uid))))
+
+;;; TODO ;;;
+(defn chat-controller [conn msg])
 
 (defn handle-msg [conn msg]
   (if (@conns conn)
     (let [parsed (json/decode msg)
           call (case (get parsed "type")
                  "ping" ping
-                 "create_game_state" create-game-state
+                 "game" game-controller
+                 "chat" chat-controller
                  (fn [conn _] (resp :error "invalid_service_type" conn)))
           payload (get parsed "payload")]
       (call conn payload))

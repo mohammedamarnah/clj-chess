@@ -1,6 +1,6 @@
 (ns chess.core
   (:require
-    [chess.server.server :refer [app]]
+    [chess.server :refer [app]]
     [environ.core :refer [env]]
     [org.httpkit.server :as http-kit]
     [clojure.tools.logging :as log])
