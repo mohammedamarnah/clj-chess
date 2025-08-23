@@ -10,5 +10,6 @@
                  [cheshire "5.10.0"]
                  [buddy "2.0.0"]
                  [compojure "1.6.1"]]
-  :main chess.core/-main
+  :main chess.core
+  :aot [chess.core]
   :repl-options {:init-ns chess.core})
