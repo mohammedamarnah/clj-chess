@@ -10,7 +10,7 @@
                                        (get query-string (inc i)))) query-string))]
     (try
       (first (str/split token #"/"))
-      (catch Exception e
+      (catch Exception _
         nil))))
 
 (defn authorize [token]
@@ -21,5 +21,5 @@
       (if (contains? decoded "user_id")
         (get decoded "user_id")
         nil))
-    (catch Exception e
+    (catch Exception _
       nil)))
