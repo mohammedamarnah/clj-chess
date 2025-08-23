@@ -42,10 +42,11 @@
         (assoc :legal_moves (cah/legal-moves new-board (mod (inc (:player_turn gs)) 2)))
         (assoc :player_turn (mod (inc (:player_turn gs)) 2)))))
 
-(defn in-hand-after-transition [gs]
+(defn new-game [gs uid]
   (as-> gs gs
     (assoc gs :board ch/fill-board)
-    (assoc gs :legal_moves (cah/legal-moves gs))))
+    (assoc gs :legal_moves (cah/legal-moves gs))
+    (assoc-in gs [:players_info 0 :user_id] uid)))
 
 (defn final-result-action [gs]
   (let [board (:board gs)
