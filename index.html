@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+    
+    <div>
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" disabled>Disconnect</button>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <button id="pingBtn" disabled>Ping</button>
+        <button id="gameBtn" disabled>New Game</button>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <input type="text" id="messageInput" placeholder="Enter message to send" disabled>
+        <button id="sendBtn" disabled>Send Message</button>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <h3>Received Messages:</h3>
+        <div id="messages" style="border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll;"></div>
+    </div>
+
+    <script>
+        let socket = null;
+        
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const messagesDiv = document.getElementById('messages');
+        const pingBtn = document.getElementById('pingBtn');
+        const gameBtn = document.getElementById('gameBtn');
+        
+        function addMessage(message) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        connectBtn.addEventListener('click', function() {
+            socket = new WebSocket('ws://localhost:8080?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjM0NX0.6L5S6cep1mtknTIxHzxU_70k-wRC5EkuAl5B0sKLtdc');
+            
+            socket.onopen = function(event) {
+                addMessage('Connected to WebSocket server');
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                pingBtn.disabled = false;
+                gameBtn.disabled = false;
+            };
+            
+            socket.onmessage = function(event) {
+                addMessage('Server: ' + event.data);
+            };
+            
+            socket.onclose = function(event) {
+                addMessage('Disconnected from WebSocket server');
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                messageInput.disabled = true;
+                sendBtn.disabled = true;
+                pingBtn.disabled = true;
+                gameBtn.disabled = true;
+            };
+            
+            socket.onerror = function(error) {
+                addMessage('WebSocket error: ' + error);
+            };
+        });
+        
+        disconnectBtn.addEventListener('click', function() {
+            if (socket) {
+                socket.close();
+            }
+        });
+        
+        sendBtn.addEventListener('click', function() {
+            const message = messageInput.value;
+            if (message && socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+                addMessage('You: ' + message);
+                messageInput.value = '';
+            }
+        });
+
+        pingBtn.addEventListener('click', function() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const pingMessage = JSON.stringify({ type: 'ping' });
+                socket.send(pingMessage);
+                addMessage('You: ' + pingMessage);
+            }
+        });
+
+        gameBtn.addEventListener('click', function() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const gameMessage = JSON.stringify({ type: 'game', payload: { action: 'new_game' } });
+                socket.send(gameMessage);
+                addMessage('You: ' + gameMessage);
+            }
+        });
+        
+        messageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
