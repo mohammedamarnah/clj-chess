@@ -107,7 +107,7 @@
         function connectWebSocket() {
             token = '?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMjM0NX0.6L5S6cep1mtknTIxHzxU_70k-wRC5EkuAl5B0sKLtdc';
             // socket = new WebSocket('ws://localhost:8080'+token);
-            socket = new WebSocket('ws://clj-chess-production.up.railway.app'+token);
+            socket = new WebSocket('wss://clj-chess-production.up.railway.app'+token);
             
             socket.onopen = function(event) {
                 console.log('Connected to WebSocket');
