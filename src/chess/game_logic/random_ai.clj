@@ -1,13 +1,13 @@
 (ns chess.game-logic.random-ai
   (:require [chess.game-logic.helpers :as ch]))
 
-(defn move-pawn [gs & args]
+(defn move-pawn [gs & _]
   (let [legal-moves (:legal_moves gs)
         random-pawn (rand-nth legal-moves)
         random-pos (rand-nth (second random-pawn))]
     ["move_pawn" (:player_turn gs) {:step [(first random-pawn) random-pos]}]))
 
-(defn set-pawn [gs & args]
+(defn set-pawn [gs & _]
   (let [board (:board gs)
         player-turn (:player_turn gs)
         my-pieces (ch/get-pieces board player-turn)
